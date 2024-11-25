@@ -1,0 +1,125 @@
+C51 COMPILER V9.60.7.0   TEST                                                              11/24/2024 20:16:35 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TEST
+OBJECT MODULE PLACED IN .\Objects\test.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\test
+                    -.lst) TABS(2) OBJECT(.\Objects\test.obj)
+
+line level    source
+
+   1          #include<stdio.h>
+   2          #include<reg51.h>
+   3          #define lcd_port P2
+   4          
+   5          // LCD Pins
+   6          sbit rs = P3^0;
+   7          sbit rw = P3^1;
+   8          sbit e  = P3^2;
+   9          
+  10          // Keypad Pins
+  11          sbit r1 = P1^0;
+  12          sbit r2 = P1^1;
+  13          sbit r3 = P1^2;
+  14          sbit r4 = P1^3;
+  15          
+  16          sbit c1 = P1^4;
+  17          sbit c2 = P1^5;
+  18          sbit c3 = P1^6;
+  19          sbit c4 = P1^7;
+  20          
+  21          void delay(int t) {
+  22   1          int i, j;
+  23   1          for (i = 0; i < t; i++) {
+  24   2              for (j = 0; j < 100; j++);
+  25   2          }
+  26   1      }
+  27          
+  28          void lcd_cmd(char cmd) {
+  29   1          lcd_port = cmd;
+  30   1          rs = 0;
+  31   1          rw = 0;
+  32   1          e = 1;
+  33   1          delay(5);
+  34   1          e = 0;
+  35   1      }
+  36          
+  37          void lcd_data(char dat) {
+  38   1          lcd_port = dat;
+  39   1          rs = 1;
+  40   1          rw = 0;
+  41   1          e = 1;
+  42   1          delay(5);
+  43   1          e = 0;
+  44   1      }
+  45          
+  46          void lcd_init() {
+  47   1          lcd_cmd(0x38); // 8-bit mode
+  48   1          delay(20);
+  49   1          lcd_cmd(0x0F); // Display ON, Cursor ON
+  50   1          delay(20);
+  51   1          lcd_cmd(0x01); // Clear display
+  52   1          delay(20);
+  53   1          lcd_cmd(0x80); // Cursor at home position
+  54   1          delay(20);
+C51 COMPILER V9.60.7.0   TEST                                                              11/24/2024 20:16:35 PAGE 2   
+
+  55   1      }
+  56          
+  57          char scan_keypad() {
+  58   1          // Row 1
+  59   1          r1 = 0; r2 = r3 = r4 = 1;
+  60   1          if (c1 == 0) { delay(2000); return '7'; }
+  61   1          if (c2 == 0) { delay(2000); return '8'; }
+  62   1          if (c3 == 0) { delay(2000); return '9'; }
+  63   1          if (c4 == 0) { delay(2000); return 'A'; }
+  64   1      
+  65   1          // Row 2
+  66   1          r2 = 0; r1 = r3 = r4 = 1;
+  67   1          if (c1 == 0) { delay(2000); return '4'; }
+  68   1          if (c2 == 0) { delay(2000); return '5'; }
+  69   1          if (c3 == 0) { delay(2000); return '6'; }
+  70   1          if (c4 == 0) { delay(2000); return 'B'; }
+  71   1      
+  72   1          // Row 3
+  73   1          r3 = 0; r1 = r2 = r4 = 1;
+  74   1          if (c1 == 0) { delay(2000); return '1'; }
+  75   1          if (c2 == 0) { delay(2000); return '2'; }
+  76   1          if (c3 == 0) { delay(2000); return '3'; }
+  77   1          if (c4 == 0) { delay(2000); return 'C'; }
+  78   1      
+  79   1          // Row 4
+  80   1          r4 = 0; r1 = r2 = r3 = 1;
+  81   1          if (c1 == 0) { delay(20); return '*'; }
+  82   1          if (c2 == 0) { delay(20); return '0'; }
+  83   1          if (c3 == 0) { delay(20); return '#'; }
+  84   1          if (c4 == 0) { delay(20); return 'D'; }
+  85   1      
+  86   1          return 0; // No key pressed
+  87   1      }
+  88          
+  89          int main() {
+  90   1          char key;
+  91   1          lcd_init();
+  92   1      
+  93   1          while (1) {
+  94   2              key = scan_keypad();
+  95   2              if (key != 0) { // If a key is pressed
+  96   3                  lcd_data(key); // Display the pressed key
+  97   3              }
+  98   2          }
+  99   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    337    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
